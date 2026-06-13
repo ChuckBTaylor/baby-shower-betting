@@ -16,7 +16,7 @@ function _localSet(key: string, value: string): void {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const HOST_PIN = "1234"; // change this to your preferred PIN
+const HOST_PIN = "0811";
 
 const CATEGORIES = [
   { id: "birthdate", label: "Birth Date & Time", type: "datetime", parlayNote: "Exact date required (no time)", shortLabel: "Birthdate",  parlayAllowed: true,  parlayDateOnly: true },
@@ -198,23 +198,23 @@ function computeParlayResults(submissions, actuals) {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const C = {
-  bg:      "#08070a",
-  surface: "rgba(255,255,255,0.04)",
-  border:  "rgba(255,255,255,0.09)",
-  gold:    "#d4a843",
-  goldDim: "rgba(212,168,67,0.35)",
-  goldFaint:"rgba(212,168,67,0.12)",
-  text:    "#f2ead8",
-  muted:   "#8a7f6a",
-  dim:     "#4a4030",
-  green:   "#4caf7d",
-  red:     "#e05a4a",
+  bg:       "#fff4f8",
+  surface:  "rgba(255,255,255,0.7)",
+  border:   "rgba(220,90,155,0.22)",
+  gold:     "#d4478a",
+  goldDim:  "rgba(212,71,138,0.38)",
+  goldFaint:"rgba(212,71,138,0.11)",
+  text:     "#3a0d22",
+  muted:    "#a06880",
+  dim:      "#d8aabf",
+  green:    "#28a870",
+  red:      "#e04a4a",
 };
 
 const S = {
   page: {
     minHeight: "100vh",
-    background: `radial-gradient(ellipse at 20% 10%, #1a1206 0%, #08070a 60%)`,
+    background: `radial-gradient(ellipse at 25% 10%, #ffe4f0 0%, #fff4f8 50%, #f8eeff 100%)`,
     color: C.text,
     fontFamily: "'Georgia', 'Times New Roman', serif",
     paddingBottom: 80,
@@ -248,8 +248,8 @@ const S = {
     letterSpacing: 0.5,
     transition: "all 0.15s",
     ...(variant === "primary" ? {
-      background: `linear-gradient(135deg, ${C.gold}, #a07830)`,
-      color: "#110d02",
+      background: `linear-gradient(135deg, ${C.gold}, #a02060)`,
+      color: "#fff",
     } : variant === "ghost" ? {
       background: "transparent",
       border: `1px solid ${C.goldDim}`,
@@ -265,7 +265,7 @@ const S = {
     }),
   }),
   input: {
-    background: "rgba(255,255,255,0.05)",
+    background: "rgba(255,255,255,0.85)",
     border: `1px solid ${C.goldDim}`,
     borderRadius: 7,
     color: C.text,
@@ -318,18 +318,18 @@ function DatetimeInput({ value = {}, onChange, dateOnly = false, rangeAllowed = 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           <input type="date" value={value.date ?? ""}
             onChange={e => onChange({ ...value, date: e.target.value })}
-            style={{ ...S.input, width: 160 }} />
+            style={{ ...S.input, width: 160, color: "#000" }} />
           {!dateOnly && (
             <input type="time" value={value.time ?? ""}
               onChange={e => onChange({ ...value, time: e.target.value })}
-              style={{ ...S.input, width: 130 }} />
+              style={{ ...S.input, width: 130, color: "#000" }} />
           )}
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           <input type="date" value={value.date ?? ""}
             onChange={e => onChange({ ...value, date: e.target.value })}
-            style={{ ...S.input, width: 160 }} />
+            style={{ ...S.input, width: 160, color: "#000" }} />
           <span style={{ color: C.muted }}>to</span>
           <input type="date" value={value.dateTo ?? ""}
             onChange={e => onChange({ ...value, dateTo: e.target.value })}
@@ -358,7 +358,7 @@ function ValueInput({ cat, value, onChange, parlayMode = false }) {
         <button key={opt} onClick={() => onChange(opt)} style={{
           padding: "5px 13px", borderRadius: 20, border: `1px solid ${value === opt ? C.gold : C.goldDim}`,
           background: value === opt ? C.gold : "transparent",
-          color: value === opt ? "#110d02" : C.gold,
+          color: value === opt ? "#fff" : C.gold,
           fontSize: 13, cursor: "pointer", fontFamily: "Georgia,serif", transition: "all 0.12s",
         }}>{opt}</button>
       ))}
@@ -396,54 +396,91 @@ function Intro({ onStart, submissions }) {
   }
 
   return (
-    <div style={{ ...S.wrap, paddingTop: 70, textAlign: "center" }}>
-      <div style={{ fontSize: 11, letterSpacing: 6, color: C.gold, textTransform: "uppercase", marginBottom: 18 }}>
-        Baby Shower · Prediction Game
-      </div>
-      <h1 style={{ fontSize: 52, fontWeight: 400, margin: "0 0 6px", lineHeight: 1.1, color: C.text }}>
-        Place<br />Your Bets
-      </h1>
-      <div style={S.goldBar} />
-      <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, maxWidth: 340, margin: "0 auto 36px" }}>
-        Bet on individual categories for $3 each. Build as many parlays as you like.
-        May the odds be ever in your favor.
-      </p>
-      <div style={{ textAlign: "left", maxWidth: 360, margin: "0 auto 8px" }}>
-        <label style={S.label}>Your name</label>
-        <input type="text" placeholder="e.g. Aunt Sophie"
-          value={name} onChange={e => setName(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && tryStart()}
-          style={{ ...S.input, width: "100%", fontSize: 18, padding: "12px 16px",
-            border: `1px solid ${isDuplicate ? C.red : C.goldDim}` }} />
+    <div style={{ display: "flex", alignItems: "flex-start", minHeight: "100vh" }}>
+
+      {/* ── Left panel: who has bet ── */}
+      <div style={{ width: 230, minWidth: 230, padding: "60px 16px 60px 20px", borderRight: `1px solid ${C.border}`, minHeight: "100vh" }}>
+        <div style={S.label}>Bets placed</div>
+        {submissions.length === 0 ? (
+          <div style={{ color: C.dim, fontSize: 13, marginTop: 8 }}>No bets yet!</div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+            {submissions.map((sub, i) => {
+              const activeCats = CATEGORIES.filter(c => sub.bets[c.id]?.active);
+              return (
+                <div key={i} style={S.card}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: C.text, marginBottom: 5 }}>{sub.name}</div>
+                  {activeCats.map(cat => (
+                    <div key={cat.id} style={{ fontSize: 12, color: C.muted, lineHeight: 1.9 }}>· {cat.shortLabel}</div>
+                  ))}
+                  {sub.parlays.length > 0 && (
+                    <div style={{ fontSize: 12, color: C.gold, marginTop: 3 }}>
+                      + {sub.parlays.length} parlay{sub.parlays.length !== 1 ? "s" : ""}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {isDuplicate && (
-        <div style={{ maxWidth: 360, margin: "0 auto 16px", padding: "10px 14px", background: "rgba(224,90,74,0.08)", border: `1px solid rgba(224,90,74,0.3)`, borderRadius: 8, textAlign: "left" }}>
-          <div style={{ color: C.red, fontWeight: 700, fontSize: 13, marginBottom: 4 }}>
-            That name already has a bet.
+      {/* ── Right panel: main form ── */}
+      <div style={{ flex: 1, paddingTop: 70, paddingBottom: 80, textAlign: "center" }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px" }}>
+          <div style={{ fontSize: 11, letterSpacing: 6, color: C.gold, textTransform: "uppercase", marginBottom: 18 }}>
+            Baby Shower · Prediction Game
           </div>
-          <div style={{ color: C.muted, fontSize: 12, lineHeight: 1.6 }}>
-            Please enter a different name. If you want to edit your existing bets, find <strong style={{ color: C.text }}>Will</strong> and ask him to remove your old entry.
+          <h1 style={{ fontSize: 52, fontWeight: 400, margin: "0 0 6px", lineHeight: 1.1, color: C.text }}>
+            Place<br />Your Bets
+          </h1>
+          <div style={S.goldBar} />
+          <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, maxWidth: 340, margin: "0 auto 36px" }}>
+            Bet on individual categories for $3 each. Build as many parlays as you like.
+            May the odds be ever in your favor.
+          </p>
+          <div style={{ textAlign: "left", maxWidth: 360, margin: "0 auto 8px" }}>
+            <label style={S.label}>Your name</label>
+            <input type="text" placeholder="e.g. Aunt Sophie"
+              value={name} onChange={e => setName(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && tryStart()}
+              style={{ ...S.input, width: "100%", fontSize: 18, padding: "12px 16px",
+                border: `1px solid ${isDuplicate ? C.red : C.goldDim}` }} />
           </div>
+
+          {isDuplicate && (
+            <div style={{ maxWidth: 360, margin: "0 auto 16px", padding: "10px 14px", background: "rgba(224,90,74,0.08)", border: `1px solid rgba(224,90,74,0.3)`, borderRadius: 8, textAlign: "left" }}>
+              <div style={{ color: C.red, fontWeight: 700, fontSize: 13, marginBottom: 4 }}>
+                That name already has a bet.
+              </div>
+              <div style={{ color: C.muted, fontSize: 12, lineHeight: 1.6 }}>
+                Please enter a different name. If you want to edit your existing bets, find <strong style={{ color: C.text }}>Will</strong> and ask him to remove your old entry.
+              </div>
+            </div>
+          )}
+
+          {!isDuplicate && <div style={{ marginBottom: 24 }} />}
+
+          <button onClick={tryStart}
+            disabled={!name.trim() || !!isDuplicate}
+            style={{ ...S.btn("primary"), width: 280, padding: "14px", fontSize: 16, opacity: name.trim() && !isDuplicate ? 1 : 0.4 }}>
+            Enter the Parlor →
+          </button>
+          <p style={{ color: C.muted, fontSize: 17, marginTop: 16 }}>
+            $3 per standalone bet · parlays $1–$50 · unlimited parlays
+          </p>
         </div>
-      )}
-
-      {!isDuplicate && <div style={{ marginBottom: 24 }} />}
-
-      <button onClick={tryStart}
-        disabled={!name.trim() || !!isDuplicate}
-        style={{ ...S.btn("primary"), width: 280, padding: "14px", fontSize: 16, opacity: name.trim() && !isDuplicate ? 1 : 0.4 }}>
-        Enter the Parlor →
-      </button>
-      <p style={{ color: C.dim, fontSize: 12, marginTop: 16 }}>
-        $3 per standalone bet · parlays $1–$50 · unlimited parlays
-      </p>
+      </div>
     </div>
   );
 }
 
 function StandaloneForm({ name, existing, onSave }) {
-  const [bets, setBets] = useState(existing || {});
+  const [bets, setBets] = useState(() => {
+    const base = existing || {};
+    if (base.birthdate?.value) return base;
+    return { ...base, birthdate: { ...base.birthdate, value: { date: "2026-08-11" } } };
+  });
 
   const activeCats = CATEGORIES.filter(c => bets[c.id]?.active);
   const total = activeCats.length * CAT_FEE;
@@ -462,7 +499,7 @@ function StandaloneForm({ name, existing, onSave }) {
       <div style={{ paddingTop: 36, marginBottom: 8 }}>
         <div style={S.label}>Standalone bets · {name}</div>
         <h2 style={{ margin: 0, fontSize: 28, fontWeight: 400 }}>Pick your categories</h2>
-        <p style={{ color: C.muted, fontSize: 13, margin: "6px 0 0" }}>
+        <p style={{ color: C.muted, fontSize: 19, margin: "6px 0 0" }}>
           $3 per category · pot split among winners
         </p>
       </div>
@@ -491,7 +528,7 @@ function StandaloneForm({ name, existing, onSave }) {
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {active && <span style={S.tag()}>{fmtMoney(CAT_FEE)}</span>}
+                  {active && <span style={{ ...S.tag(), fontSize: 18, padding: "5px 15px", fontWeight: 700 }}>{fmtMoney(CAT_FEE)}</span>}
                   <button onClick={() => toggle(cat.id)} style={{
                     ...S.btn(active ? "primary" : "ghost"),
                     padding: "5px 14px", fontSize: 13,
@@ -569,7 +606,7 @@ function ParlayBuilder({ name, parlays, onSave, onDelete, onDone, onBack }) {
         <button onClick={onBack} style={{ ...S.btn("ghost"), padding: "5px 14px", fontSize: 13, marginBottom: 16 }}>← Back to Standalone</button>
         <div style={S.label}>Parlays · {name}</div>
         <h2 style={{ margin: 0, fontSize: 28, fontWeight: 400 }}>Build a parlay</h2>
-        <p style={{ color: C.muted, fontSize: 13, margin: "6px 0 0" }}>
+        <p style={{ color: C.muted, fontSize: 19, margin: "6px 0 0" }}>
           Pick 2+ legs · set your stake · submit as many as you like
         </p>
       </div>
@@ -750,7 +787,8 @@ function Confirmed({ name, bets, parlays, onReset }) {
       <div style={S.goldBar} />
       <p style={{ color: C.muted, lineHeight: 1.7 }}>
         <strong style={{ color: C.text }}>{name}</strong>, your slip is confirmed.<br />
-        Hand <strong style={{ color: C.gold }}>{fmtMoney(grandTotal)}</strong> to the host. Good luck!
+        Venmo <strong style={{ color: C.gold }}>@WillyScripps</strong> the amount of <strong style={{ color: C.gold }}>{fmtMoney(grandTotal)}</strong>.<br />
+        Last 4: <strong style={{ color: C.text }}>2861</strong>. Good luck!
       </p>
       <button onClick={onReset}
         style={{ ...S.btn("ghost"), marginTop: 28, padding: "10px 28px", fontSize: 14 }}>
@@ -866,7 +904,7 @@ function HostDashboard({ submissions, actuals, onSaveActuals, onDeleteSubmission
 
   return (
     <div style={{ ...S.page, paddingTop: 0 }}>
-      <div style={{ background: "rgba(0,0,0,0.6)", borderBottom: `1px solid ${C.border}`, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 10 }}>
+      <div style={{ background: "rgba(255,244,248,0.96)", borderBottom: `1px solid ${C.border}`, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 10 }}>
         <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 2, color: C.gold }}>HOST DASHBOARD</div>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => {
@@ -1256,7 +1294,6 @@ function HostLogin({ onAuth, onCancel }) {
           <button onClick={onCancel} style={{ ...S.btn("ghost"), flex: 1, padding: 10 }}>Cancel</button>
           <button onClick={attempt} style={{ ...S.btn("primary"), flex: 1, padding: 10 }}>Enter</button>
         </div>
-        <p style={{ color: C.dim, fontSize: 11, marginTop: 12 }}>Default PIN: 1234 — change HOST_PIN in code</p>
       </div>
     </div>
   );
